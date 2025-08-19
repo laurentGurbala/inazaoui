@@ -10,17 +10,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/", name="home")
-     */
+    #[Route("/", name: "home")]
     public function home()
     {
         return $this->render('front/home.html.twig');
     }
 
-    /**
-     * @Route("/guests", name="guests")
-     */
+    #[Route("/guests", name: "guests")]
     public function guests(UserRepository $userRepository)
     {
         $guests = $userRepository->findBy(['admin' => false]);
@@ -29,9 +25,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/guest/{id}", name="guest")
-     */
+    #[Route("/guest/{id}", name: "guest")]
     public function guest(int $id,UserRepository $userRepository)
     {
         // On récupère le guest via le repository injecté
@@ -41,9 +35,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/portfolio/{id}", name="portfolio", defaults={"id"=null})
-     */
+    #[Route("/portfolio/{id}", name: "portfolio")]
     public function portfolio(
         AlbumRepository $albumRepository,
         MediaRepository $mediaRepository,
@@ -67,6 +59,7 @@ class HomeController extends AbstractController
     /**
      * @Route("/about", name="about")
      */
+    #[Route("/about", name: "about")]
     public function about()
     {
         return $this->render('front/about.html.twig');
