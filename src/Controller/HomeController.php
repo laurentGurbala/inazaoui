@@ -19,7 +19,7 @@ class HomeController extends AbstractController
     #[Route("/guests", name: "guests")]
     public function guests(UserRepository $userRepository)
     {
-        $guests = $userRepository->finGuests();
+        $guests = $userRepository->findVisibleGuests();
 
         return $this->render('front/guests.html.twig', [
             'guests' => $guests
@@ -31,6 +31,11 @@ class HomeController extends AbstractController
     {
         // On récupère le guest via le repository injecté
         $guest = $userRepository->find($id);
+
+        if (!$guest || $guest->isBlocked()) {
+            throw $this->createNotFoundException('Cet invité n’existe pas ou a été bloqué.');
+        }
+
         return $this->render('front/guest.html.twig', [
             'guest' => $guest
         ]);

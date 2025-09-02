@@ -19,23 +19,25 @@ class MediaController extends AbstractController
         $page = $request->query->getInt('page', 1);
 
         $criteria = [];
+        $limit = 25;
 
         if (!$this->isGranted('ROLE_ADMIN')) {
             $criteria['user'] = $this->getUser();
         }
 
-        $medias = $mediaRepository->findBy(
+        $medias = $mediaRepository->findAllVisibleMedias(
             $criteria,
             ['id' => 'ASC'],
-            25,
-            25 * ($page - 1)
+            $limit,
+            $limit * ($page - 1)
         );
-        $total = $mediaRepository->count($criteria);
+        $total = $mediaRepository->countVisibleMedias($criteria);
 
         return $this->render('admin/media/index.html.twig', [
             'medias' => $medias,
             'total' => $total,
-            'page' => $page
+            'page' => $page,
+            'limit' => $limit,
         ]);
     }
 
