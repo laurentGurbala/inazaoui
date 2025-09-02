@@ -37,7 +37,7 @@ class MediaFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 1; $i < 50; $i++) {
             $media = new Media();
             $media->setTitle("Titre " . $i);
-            $media->setPath(sprintf('uploads/admin_media%d.jpg', $i));
+            $media->setPath(sprintf('uploads/%04d.jpg', $i));
             $media->setUser($this->getReference(UserFixtures::ADMIN_USER_REFERENCE, User::class));
 
             $albumIndex = (int) ceil($i / 10);
