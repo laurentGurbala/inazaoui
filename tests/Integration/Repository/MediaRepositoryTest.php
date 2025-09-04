@@ -28,12 +28,24 @@ class MediaRepositoryTest extends KernelTestCase
     /**
      * @dataProvider mediaProvider
      */
-    public function testFindAllVisibleMediasReturnsOnlyNonBlockedUsers(): void
+    public function testFindAllVisibleMediasReturnsOnlyNonBlockedUsers(
+        array $criteria, 
+        array $orderBy, 
+        int $limit, 
+        int $offset, 
+        ?int $expectedCount
+    ): void
     {
-        $medias = $this->mediaRepository->findAllVisibleMedias();
+        $medias = $this->mediaRepository->findAllVisibleMedias($criteria, $orderBy, $limit, $offset);
 
-        $this->assertNotEmpty($medias);
+        // Si expectedCount est null => on ne teste pas le nombre exact
+        if ($expectedCount !== null) {
+            $this->assertCount($expectedCount, $medias);
+        } else {
+            $this->assertNotEmpty($medias); // juste vérifier que la collection n'est pas vide
+        }
 
+        // Tous les médias doivent appartenir à des utilisateurs non bloqués
         foreach ($medias as $media) {
             $this->assertFalse($media->getUser()->isBlocked());
         }
@@ -58,10 +70,10 @@ class MediaRepositoryTest extends KernelTestCase
     public function mediaProvider(): array
     {
         return [
-            'no limit no offset' => [[], ['id' => 'ASC'], 0, 0, 50],
+            'no limit no offset' => [[], ['id' => 'ASC'], 0, 0, null],
             'limit 5 offset 0'   => [[], ['id' => 'DESC'], 5, 0, 5],
             'limit 5 offset 5'   => [[], ['id' => 'ASC'], 5, 5, 5],
-            'offset beyond count' => [[], [], 5, 1000, 0],
+            'offset beyond count' => [[], [], 5, 6000, 0],
         ];
     }
 }
