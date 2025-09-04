@@ -38,7 +38,7 @@ class UserFixtures extends Fixture
             $user = new User();
             $user->setName($faker->name());
             $user->setDescription($faker->realTextBetween(80, 200));
-            $user->setEmail("invite+{$i}@test.fr");
+            $user->setEmail("invite{$i}@test.fr");
             $user->setPassword($this->passwordHasher->hashPassword($user, '123'));
             $manager->persist($user);
 

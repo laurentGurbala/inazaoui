@@ -94,6 +94,9 @@
         ],
         "test-home_controller": [
             "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php --coverage-html public/test-coverage"
+        ],
+        "test-album_controller": [
+            "php vendor/bin/phpunit tests/Fonctional/AlbumControllerTest.php --coverage-html public/test-coverage"
         ]
     },
     "conflict": {
