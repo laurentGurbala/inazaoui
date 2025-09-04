@@ -6,6 +6,7 @@ use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Faker\Factory;
 
 class UserFixtures extends Fixture
 {
@@ -17,9 +18,11 @@ class UserFixtures extends Fixture
     {
         $this->loadUser($manager);
     }
-
+    
     private function loadUser(ObjectManager $manager): void
     {
+        $faker = Factory::create("fr_FR");
+
         // Create admin user
         $admin = new User();
         $admin->setName("Ina Zaoui");
@@ -28,17 +31,21 @@ class UserFixtures extends Fixture
         $admin->setPassword($this->passwordHasher->hashPassword($admin, '123'));
         $manager->persist($admin);
 
-        // Create regular user
-        for ($i = 1; $i <= 10; $i++) {
-            $user = new User();
-            $user->setName("Invité " . $i);
-            $user->setDescription("Je suis l'invité numéro " . $i);
-            $user->setEmail("invité" . $i . "@test.fr");
-            $user->setRoles(['ROLE_USER']);
-            $user->setPassword($this->passwordHasher->hashPassword($admin, '123'));
-            $manager->persist($user);
-        }
-        $manager->flush();
         $this->addReference(self::ADMIN_USER_REFERENCE, $admin);
+
+        // Create regular user
+        for ($i = 1; $i <= 100; $i++) {
+            $user = new User();
+            $user->setName($faker->name());
+            $user->setDescription($faker->realTextBetween(80, 200));
+            $user->setEmail("invite+{$i}@test.fr");
+            $user->setPassword($this->passwordHasher->hashPassword($user, '123'));
+            $manager->persist($user);
+
+            // on garde des références pour MediaFixtures
+            $this->addReference("user_$i", $user);
+        }
+        
+        $manager->flush();
     }
 }

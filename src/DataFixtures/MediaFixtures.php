@@ -8,6 +8,7 @@ use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Faker\Factory;
 
 class MediaFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -34,6 +35,9 @@ class MediaFixtures extends Fixture implements DependentFixtureInterface
 
     private function loadMedia(ObjectManager $manager): void
     {
+        $faker = Factory::create('fr_FR');
+
+        // Create media for admin user
         for ($i = 1; $i < 50; $i++) {
             $media = new Media();
             $media->setTitle("Titre " . $i);
@@ -44,6 +48,19 @@ class MediaFixtures extends Fixture implements DependentFixtureInterface
             $media->setAlbum(
                 $this->getReference(self::ALBUM_REFERENCE_PREFIX . $albumIndex, Album::class)
             );
+
+            $manager->persist($media);
+        }
+
+        // Create media for regular users
+        for ($i = 50; $i <= 5000; $i++) {
+            $media = new Media();
+            $media->setTitle($faker->sentence(3));
+            $media->setPath(sprintf('uploads/%04d.jpg', $i));
+
+            // Assign a random user
+            $randomUser = $this->getReference("user_" . $faker->numberBetween(1, 100), User::class);
+            $media->setUser($randomUser);
 
             $manager->persist($media);
         }
