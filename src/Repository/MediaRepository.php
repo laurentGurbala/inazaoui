@@ -39,10 +39,10 @@ class MediaRepository extends ServiceEntityRepository
             }
         }
 
-        if ($limit !== null) {
+        if ($limit !== 0) {
             $qb->setMaxResults($limit);
         }
-        if ($offset !== null) {
+        if ($offset !== 0) {
             $qb->setFirstResult($offset);
         }
 
