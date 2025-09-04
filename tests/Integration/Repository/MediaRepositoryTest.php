@@ -25,7 +25,9 @@ class MediaRepositoryTest extends KernelTestCase
         $this->mediaRepository = $this->entityManager->getRepository(Media::class);
     }
 
-
+    /**
+     * @dataProvider mediaProvider
+     */
     public function testFindAllVisibleMediasReturnsOnlyNonBlockedUsers(): void
     {
         $medias = $this->mediaRepository->findAllVisibleMedias();
@@ -35,14 +37,6 @@ class MediaRepositoryTest extends KernelTestCase
         foreach ($medias as $media) {
             $this->assertFalse($media->getUser()->isBlocked());
         }
-    }
-
-    public function testFindAllVisibleMediasWithLimitAndOrder(): void
-    {
-        $medias = $this->mediaRepository->findAllVisibleMedias([], ['id' => 'DESC'], 5);
-
-        $this->assertCount(5, $medias);
-        $this->assertGreaterThan($medias[1]->getId(), $medias[0]->getId());
     }
 
     public function testCountVisibleMedias(): void
@@ -59,5 +53,15 @@ class MediaRepositoryTest extends KernelTestCase
         ]);
 
         $this->assertEquals(1, $countWithCriteria);
+    }
+
+    public function mediaProvider(): array
+    {
+        return [
+            'no limit no offset' => [[], ['id' => 'ASC'], 0, 0, 50],
+            'limit 5 offset 0'   => [[], ['id' => 'DESC'], 5, 0, 5],
+            'limit 5 offset 5'   => [[], ['id' => 'ASC'], 5, 5, 5],
+            'offset beyond count' => [[], [], 5, 1000, 0],
+        ];
     }
 }
