@@ -91,6 +91,9 @@
         ],
         "test-no-purge": [
             "php vendor/bin/phpunit --coverage-html public/test-coverage"
+        ],
+        "test-home_controller": [
+            "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php --coverage-html public/test-coverage"
         ]
     },
     "conflict": {
