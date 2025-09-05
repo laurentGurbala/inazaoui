@@ -24,7 +24,7 @@ class UserCheckerTest extends TestCase
         $this->expectException(CustomUserMessageAccountStatusException::class);
         $this->expectExceptionMessage('Votre compte a été bloqué. Contactez l’administrateur.');
 
-        $this->checker->checkPreAuth($user);
+        $this->checker->checkPostAuth($user);
     }
 
     public function testCheckPreAuthWithActiveUser(): void
