@@ -25,7 +25,7 @@ class AlbumControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
-        
+
         if ($userEmail) {
             $user = $userRepository->findOneBy(['email' => $userEmail]);
             $client->loginUser($user);
@@ -108,6 +108,61 @@ class AlbumControllerTest extends WebTestCase
         $client->request('GET', '/admin/album/update/999999');
 
         $this->assertResponseStatusCodeSame(404);
+    }
+
+
+    public function testDeleteAlbum(): void
+    {
+        // Connection
+        $client = static::createClient();
+        $this->loginAsAdmin($client);
+
+        // Création d'un album
+        $album = new Album();
+        $album->setName('Album à supprimer');
+
+        // Création des médias
+        $media1 = new \App\Entity\Media();
+        $media1->setTitle('Media 1');
+        $media1->setPath('media1.jpg');
+        $media1->setUser($this->loginAsAdmin($client));
+        $media1->setAlbum($album);
+
+        $media2 = new \App\Entity\Media();
+        $media2->setTitle('Media 2');
+        $media2->setPath('media2.jpg');
+        $media2->setUser($this->loginAsAdmin($client));
+        $media2->setAlbum($album);
+
+        // Persistance en BDD
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $em->persist($album);
+        $em->persist($media1);
+        $em->persist($media2);
+        $em->flush();
+
+        $albumId = $album->getId();
+        $media1Id = $media1->getId();
+        $media2Id = $media2->getId();
+
+        // Vérification que l'album et les médias existent en BDD
+        $this->assertNotNull($em->getRepository(Album::class)->find($albumId));
+        $this->assertNotNull($em->getRepository(\App\Entity\Media::class)->find($media1Id));
+        $this->assertNotNull($em->getRepository(\App\Entity\Media::class)->find($media2Id));
+
+        // Suppression de l'album
+        $client->request('GET', '/admin/album/delete/' . $albumId);
+        $this->assertResponseRedirects('/admin/album/');
+
+        // Vérification en BDD
+        $this->assertNull($em->getRepository(Album::class)->find($albumId));
+
+        // Vérification que les médias n'ont plus d'album associé
+        $this->assertNotNull($media1);
+        $this->assertNull($media1->getAlbum());
+
+        $this->assertNotNull($media2);
+        $this->assertNull($media2->getAlbum());
     }
 
     // Data Providers

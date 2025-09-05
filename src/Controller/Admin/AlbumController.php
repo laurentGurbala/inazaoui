@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Album;
 use App\Form\AlbumType;
 use App\Repository\AlbumRepository;
+use App\Repository\MediaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -82,12 +83,27 @@ class AlbumController extends AbstractController
     public function delete(
         int $id,
         AlbumRepository $albumRepository,
+        MediaRepository $mediaRepository,
         EntityManagerInterface $em
     ) {
-        $media = $albumRepository->find($id);
-        $em->remove($media);
+        // Récupérer l'album en fonction de l'id
+        $album = $albumRepository->find($id);
+        
+        if (!$album) {
+            throw $this->createNotFoundException('Album introuvable.');
+        }
+
+        // Détacher les médias liés à l'album
+        $medias = $mediaRepository->findBy(['album' => $album]);
+        foreach ($medias as $media) {
+            $media->setAlbum(null);
+        }
+
+        // Supprimer l'album
+        $em->remove($album);
         $em->flush();
 
+        // Rediriger vers la liste des albums
         return $this->redirectToRoute('admin_album_index');
     }
 }
