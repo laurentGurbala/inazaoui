@@ -82,6 +82,18 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
+        "purge-bdd": [
+            "php bin/console doctrine:database:drop --force --if-exists",
+            "php bin/console doctrine:database:create",
+            "php bin/console doctrine:schema:create",
+            "php bin/console doctrine:fixtures:load --no-interaction"
+        ],
+        "purge-bdd-test": [
+            "php bin/console doctrine:database:drop --env=test --force --if-exists",
+            "php bin/console doctrine:database:create --env=test",
+            "php bin/console doctrine:schema:create --env=test",
+            "php bin/console doctrine:fixtures:load --env=test --no-interaction"
+        ],
         "test": [
             "php bin/console doctrine:database:drop --env=test --force",
             "php bin/console doctrine:database:create --env=test",
@@ -92,11 +104,14 @@
         "test-no-purge": [
             "php vendor/bin/phpunit --coverage-html public/test-coverage"
         ],
-        "test-home_controller": [
+        "test-home-ctrl": [
             "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php --coverage-html public/test-coverage"
         ],
-        "test-album_controller": [
+        "test-album-ctrl": [
             "php vendor/bin/phpunit tests/Fonctional/AlbumControllerTest.php --coverage-html public/test-coverage"
+        ],
+        "test-guest-ctrl": [
+            "php vendor/bin/phpunit tests/Fonctional/GuestControllerTest.php --coverage-html public/test-coverage"
         ]
     },
     "conflict": {
