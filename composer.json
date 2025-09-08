@@ -115,6 +115,9 @@
         ],
         "test-security-ctrl": [
             "php vendor/bin/phpunit tests/Fonctional/SecurityControllerTest.php --coverage-html public/test-coverage"
+        ],
+        "test-media-ctrl": [
+            "php vendor/bin/phpunit tests/Fonctional/MediaControllerTest.php --coverage-html public/test-coverage"
         ]
     },
     "conflict": {
