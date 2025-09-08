@@ -112,6 +112,9 @@
         ],
         "test-guest-ctrl": [
             "php vendor/bin/phpunit tests/Fonctional/GuestControllerTest.php --coverage-html public/test-coverage"
+        ],
+        "test-security-ctrl": [
+            "php vendor/bin/phpunit tests/Fonctional/SecurityControllerTest.php --coverage-html public/test-coverage"
         ]
     },
     "conflict": {
