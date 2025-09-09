@@ -68,9 +68,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere('u.isBlocked = false')
             ->andWhere('NOT u.roles LIKE :admin')
             ->setParameter('admin', '%ROLE_ADMIN%')
+            ->leftJoin('u.medias', 'm')
+            ->addSelect('m')
             ->getQuery()
             ->getResult();
     }
+
 
 
     //    /**
