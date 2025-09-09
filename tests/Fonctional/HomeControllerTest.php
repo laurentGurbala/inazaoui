@@ -55,6 +55,9 @@ class HomeControllerTest extends BaseTestCase
         $client->request('GET', '/guest/' . $user->getId());
 
         $this->assertResponseStatusCodeSame(404);
+
+        $user->setIsBlocked(false);
+        $em->flush();
     }
 
     public function testPortfolioPage(): void
