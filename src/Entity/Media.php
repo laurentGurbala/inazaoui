@@ -30,6 +30,7 @@ class Media
     #[Assert\NotNull(message: "Veuillez sélectionner une image.")]
     #[Assert\File(
         maxSize: "2M",
+        maxSizeMessage: "Le fichier est trop volumineux ({{ size }} {{ suffix }}). La taille maximale autorisée est de {{ limit }} {{ suffix }}.",
         extensions: ["jpg", "jpeg", "png", "gif", "webp"],
         extensionsMessage: "Veuillez uploader une image valide (jpg, jpeg, png, gif, webp)."
     )]
