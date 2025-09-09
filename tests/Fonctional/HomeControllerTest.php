@@ -2,10 +2,9 @@
 
 namespace App\Tests\Fonctional;
 
-use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\BaseTestCase;
 
-class HomeControllerTest extends WebTestCase
+class HomeControllerTest extends BaseTestCase
 {
     public function testHomePage(): void
     {
@@ -47,9 +46,9 @@ class HomeControllerTest extends WebTestCase
     public function testGuestPageBlockedUser(): void
     {
         $client = static::createClient();
-
         $em = $client->getContainer()->get('doctrine')->getManager();
-        $user = $em->getRepository(User::class)->find(5); // utilisateur à bloquer
+
+        $user = $this->loginAsUser($client);
         $user->setIsBlocked(true);
         $em->flush();
 

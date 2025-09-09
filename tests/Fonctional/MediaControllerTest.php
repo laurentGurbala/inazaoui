@@ -2,37 +2,11 @@
 
 namespace App\Tests;
 
-use App\Entity\Media;
 use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class MediaControllerTest extends WebTestCase
+class MediaControllerTest extends BaseTestCase
 {
-    /**
-     * Connexion en tant qu'administrateur
-     */
-    private function loginAsAdmin($client)
-    {
-        $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
-        $admin = $userRepository->findOneBy(['email' => 'ina@zaoui.com']);
-        $client->loginUser($admin);
-
-        return $admin;
-    }
-
-    /**
-     * Connexion en tant qu'utilisateur normal
-     */
-    private function loginAsUser($client)
-    {
-        $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'invite1@test.fr']);
-        $client->loginUser($user);
-
-        return $user;
-    }
-
     /**
      * Test de l'accès à la liste des médias en tant qu'administrateur
      */

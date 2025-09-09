@@ -2,9 +2,9 @@
 
 namespace App\Tests;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\BaseTestCase;
 
-class SecurityControllerTest extends WebTestCase
+class SecurityControllerTest extends BaseTestCase
 {
     /**
      * Test la page de login

@@ -4,20 +4,10 @@ namespace App\Tests\Fonctional;
 
 use App\Entity\Album;
 use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\BaseTestCase;
 
-class AlbumControllerTest extends WebTestCase
+class AlbumControllerTest extends BaseTestCase
 {
-
-    private function loginAsAdmin($client)
-    {
-        $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
-        $admin = $userRepository->findOneBy(['email' => 'ina@zaoui.com']);
-        $client->loginUser($admin);
-
-        return $admin;
-    }
-
     /**
      * @dataProvider albumIndexAccessProvider
      */
