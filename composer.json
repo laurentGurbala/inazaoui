@@ -105,19 +105,19 @@
             "php vendor/bin/phpunit --coverage-html test/test-coverage"
         ],
         "test-home-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php --coverage-html test/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php --coverage-html Tests/test-coverage"
         ],
         "test-album-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/AlbumControllerTest.php --coverage-html test/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/AlbumControllerTest.php --coverage-html Tests/test-coverage"
         ],
         "test-guest-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/GuestControllerTest.php --coverage-html test/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/GuestControllerTest.php --coverage-html Tests/test-coverage"
         ],
         "test-security-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/SecurityControllerTest.php --coverage-html test/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/SecurityControllerTest.php --coverage-html Tests/test-coverage"
         ],
         "test-media-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/MediaControllerTest.php --coverage-html test/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/MediaControllerTest.php --coverage-html Tests/test-coverage"
         ]
     },
     "conflict": {
@@ -132,6 +132,7 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.0",
         "fakerphp/faker": "^1.24",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^9.6",
         "symfony/browser-kit": "6.4.*",
         "symfony/css-selector": "6.4.*",
