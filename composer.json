@@ -99,25 +99,25 @@
             "php bin/console doctrine:database:create --env=test",
             "php bin/console doctrine:schema:create --env=test",
             "php bin/console doctrine:fixtures:load --env=test --no-interaction",
-            "php vendor/bin/phpunit --coverage-html public/test-coverage"
+            "php vendor/bin/phpunit --coverage-html test/test-coverage"
         ],
         "test-no-purge": [
-            "php vendor/bin/phpunit --coverage-html public/test-coverage"
+            "php vendor/bin/phpunit --coverage-html test/test-coverage"
         ],
         "test-home-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php --coverage-html public/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php --coverage-html test/test-coverage"
         ],
         "test-album-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/AlbumControllerTest.php --coverage-html public/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/AlbumControllerTest.php --coverage-html test/test-coverage"
         ],
         "test-guest-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/GuestControllerTest.php --coverage-html public/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/GuestControllerTest.php --coverage-html test/test-coverage"
         ],
         "test-security-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/SecurityControllerTest.php --coverage-html public/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/SecurityControllerTest.php --coverage-html test/test-coverage"
         ],
         "test-media-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/MediaControllerTest.php --coverage-html public/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/MediaControllerTest.php --coverage-html test/test-coverage"
         ]
     },
     "conflict": {
