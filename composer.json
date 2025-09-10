@@ -105,19 +105,19 @@
             "php vendor/bin/phpunit --coverage-html test/test-coverage"
         ],
         "test-home-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php --coverage-html Tests/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php"
         ],
         "test-album-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/AlbumControllerTest.php --coverage-html Tests/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/AlbumControllerTest.php"
         ],
         "test-guest-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/GuestControllerTest.php --coverage-html Tests/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/GuestControllerTest.php"
         ],
         "test-security-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/SecurityControllerTest.php --coverage-html Tests/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/SecurityControllerTest.php"
         ],
         "test-media-ctrl": [
-            "php vendor/bin/phpunit tests/Fonctional/MediaControllerTest.php --coverage-html Tests/test-coverage"
+            "php vendor/bin/phpunit tests/Fonctional/MediaControllerTest.php"
         ],
         "cs:fix": "php-cs-fixer fix",
         "cs:check": "php-cs-fixer fix --dry-run --diff"
