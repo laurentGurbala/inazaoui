@@ -5,17 +5,17 @@ namespace App\Controller\Admin;
 use App\Entity\Media;
 use App\Form\MediaType;
 use App\Repository\MediaRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route("/admin/media")]
 class MediaController extends AbstractController
 {
     #[Route("/", name: "admin_media_index")]
-    public function index(Request $request, MediaRepository $mediaRepository)
+    public function index(Request $request, MediaRepository $mediaRepository): Response
     {
         $page = $request->query->getInt('page', 1);
 
@@ -46,16 +46,18 @@ class MediaController extends AbstractController
     public function add(
         Request $request,
         EntityManagerInterface $em
-    )
-    {
+    ): Response {
         $media = new Media();
         $form = $this->createForm(MediaType::class, $media, ['is_admin' => $this->isGranted('ROLE_ADMIN')]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$this->isGranted('ROLE_ADMIN')) {
-                $media->setUser($this->getUser());
+                /** @var \App\Entity\User $user */
+                $user = $this->getUser();
+                $media->setUser($user);
             }
+            
             $media->setPath('uploads/' . md5(uniqid()) . '.' . $media->getFile()->guessExtension());
             $media->getFile()->move('uploads/', $media->getPath());
             $em->persist($media);
@@ -72,8 +74,7 @@ class MediaController extends AbstractController
         int $id,
         MediaRepository $mediaRepository,
         EntityManagerInterface $em
-        )
-    {
+    ): Response {
         $media = $mediaRepository->find($id);
         $em->remove($media);
         $em->flush();

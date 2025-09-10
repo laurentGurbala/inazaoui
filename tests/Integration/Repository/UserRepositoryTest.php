@@ -3,13 +3,14 @@
 namespace App\Tests\Integration\Repository;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class UserRepositoryTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    private $userRepository;
+    private UserRepository $userRepository;
 
     public function setUp(): void
     {

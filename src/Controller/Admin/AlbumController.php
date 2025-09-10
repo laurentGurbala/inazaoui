@@ -9,6 +9,7 @@ use App\Repository\MediaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -17,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AlbumController extends AbstractController
 {
     #[Route("/", name: "admin_album_index")]
-    public function index(AlbumRepository $albumRepository)
+    public function index(AlbumRepository $albumRepository): Response
     {
         // Récupérer tous les albums
         $albums = $albumRepository->findAll();
@@ -27,7 +28,7 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/add", name: "admin_album_add")]
-    public function add(Request $request, EntityManagerInterface $em)
+    public function add(Request $request, EntityManagerInterface $em): Response
     {
         // Créer un formulaire avec un nouvel album
         $album = new Album();
@@ -54,7 +55,8 @@ class AlbumController extends AbstractController
         Request $request,
         int $id,
         EntityManagerInterface $em
-    ) {
+    ): Response 
+    {
         // Pré-remplissage du formulaire
         $album = $albumRepository->find($id);
 
@@ -85,7 +87,8 @@ class AlbumController extends AbstractController
         AlbumRepository $albumRepository,
         MediaRepository $mediaRepository,
         EntityManagerInterface $em
-    ) {
+    ): Response
+    {
         // Récupérer l'album en fonction de l'id
         $album = $albumRepository->find($id);
         

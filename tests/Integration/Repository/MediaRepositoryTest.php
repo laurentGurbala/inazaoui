@@ -27,6 +27,12 @@ class MediaRepositoryTest extends KernelTestCase
 
     /**
      * @dataProvider mediaProvider
+     *
+     * @param array<string,mixed> $criteria
+     * @param array<string,string> $orderBy
+     * @param int $limit
+     * @param int $offset
+     * @param int|null $expectedCount
      */
     public function testFindAllVisibleMediasReturnsOnlyNonBlockedUsers(
         array $criteria, 
@@ -56,7 +62,6 @@ class MediaRepositoryTest extends KernelTestCase
         $count = $this->mediaRepository->countVisibleMedias();
 
         $this->assertGreaterThan(0, $count);
-        $this->assertIsInt($count);
 
         // Test avec critère
         $firstMedia = $this->mediaRepository->findOneBy([]);
@@ -67,6 +72,11 @@ class MediaRepositoryTest extends KernelTestCase
         $this->assertEquals(1, $countWithCriteria);
     }
 
+    /**
+     * Fournisseur de données pour les tests de findAllVisibleMedias
+     * 
+     * @return array<string, array{0: array<string,mixed>, 1: array<string,string>, 2: int, 3: int, 4: int|null}>
+     */
     public function mediaProvider(): array
     {
         return [

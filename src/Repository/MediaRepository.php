@@ -10,9 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<Media>
  *
  * @method Media|null find($id, $lockMode = null, $lockVersion = null)
- * @method Media|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Media|null findOneBy(array<string,mixed> $criteria, array<string,string>|null $orderBy = null)
  * @method Media[]    findAll()
- * @method Media[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Media[]    findBy(array<string,mixed> $criteria, array<string,string>|null $orderBy = null, int $limit = null, int $offset = null)
  */
 class MediaRepository extends ServiceEntityRepository
 {
@@ -21,7 +21,19 @@ class MediaRepository extends ServiceEntityRepository
         parent::__construct($registry, Media::class);
     }
 
-    public function findAllVisibleMedias(array $criteria = [], array $orderBy = [], int $limit = 0, int $offset = 0)
+    /**
+     * @param array<string,mixed> $criteria
+     * @param array<string,string> $orderBy
+     * @param int $limit
+     * @param int $offset
+     * @return Media[] Returns an array of Media objects
+     */
+    public function findAllVisibleMedias(
+        array $criteria = [], 
+        array $orderBy = [], 
+        int $limit = 0, 
+        int $offset = 0
+    ): array
     {
         $qb = $this->createQueryBuilder('m')
             ->join('m.user', 'u')
@@ -49,7 +61,12 @@ class MediaRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-
+    /**
+     * Compte le nombre total de médias visibles (non associés à des utilisateurs bloqués)
+     *
+     * @param array<string,mixed> $criteria
+     * @return int
+     */
     public function countVisibleMedias(array $criteria = []): int
     {
         $qb = $this->createQueryBuilder('m')

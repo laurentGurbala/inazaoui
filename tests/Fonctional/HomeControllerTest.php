@@ -78,7 +78,11 @@ class HomeControllerTest extends BaseTestCase
         $this->assertSelectorTextContains('h2', 'Qui suis-je ?');
     }
 
-    // DATA PROVIDERS
+    /**
+     * Fournisseur de données pour les tests de la page des invités
+     *
+     * @return array<string, array{0: int, 1: int}>
+     */
     public function guestPageProvider(): array
     {
         return [

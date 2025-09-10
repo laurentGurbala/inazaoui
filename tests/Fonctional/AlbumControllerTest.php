@@ -148,14 +148,14 @@ class AlbumControllerTest extends BaseTestCase
         $this->assertNull($em->getRepository(Album::class)->find($albumId));
 
         // Vérification que les médias n'ont plus d'album associé
-        $this->assertNotNull($media1);
         $this->assertNull($media1->getAlbum());
-
-        $this->assertNotNull($media2);
         $this->assertNull($media2->getAlbum());
     }
 
     // Data Providers
+    /**
+     * @return array<string, array{0: string|null, 1: int}>
+     */
     public function albumIndexAccessProvider(): array
     {
         return [

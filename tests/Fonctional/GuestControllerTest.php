@@ -129,6 +129,9 @@ class GuestControllerTest extends BaseTestCase
      */
     /**
      * @dataProvider invalidGuestProvider
+     *
+     * @param array<string,string> $formData
+     * @param string $expectedError
      */
     public function testAddGuestInvalidData(array $formData, string $expectedError): void
     {
@@ -151,6 +154,8 @@ class GuestControllerTest extends BaseTestCase
 
     /**
      * Fournisseur de données pour les tests d'ajout d'invité avec des données invalides
+     *
+     * @return array<string, array{0: array<string,string>, 1: string}>
      */
     public function invalidGuestProvider(): array
     {

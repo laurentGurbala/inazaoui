@@ -6,19 +6,20 @@ use App\Repository\AlbumRepository;
 use App\Repository\MediaRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
     #[Route("/", name: "home")]
-    public function home()
+    public function home(): Response
     {
         // Rendu de la vue
         return $this->render('front/home.html.twig');
     }
 
     #[Route("/guests", name: "guests")]
-    public function guests(UserRepository $userRepository)
+    public function guests(UserRepository $userRepository): Response
     {
         // Récupère les invités non-bloqués
         $guests = $userRepository->findVisibleGuests();
@@ -30,7 +31,7 @@ class HomeController extends AbstractController
     }
 
     #[Route("/guest/{id}", name: "guest")]
-    public function guest(int $id, UserRepository $userRepository)
+    public function guest(int $id, UserRepository $userRepository): Response
     {
         // On récupère l'invité par son id
         $guest = $userRepository->find($id);
@@ -53,8 +54,9 @@ class HomeController extends AbstractController
         MediaRepository $mediaRepository,
         UserRepository $userRepository,
         ?int $id = null
-    ) {
-        // Récupèr les albums, l'album courant et les médias 
+    ): Response 
+    {
+        // Récupèr les albums, l'album courant et les médias
         $albums = $albumRepository->findAll();
         $album = $id ? $albumRepository->find($id) : null;
         $user = $userRepository->findAdmin();
@@ -71,7 +73,7 @@ class HomeController extends AbstractController
     }
 
     #[Route("/about", name: "about")]
-    public function about()
+    public function about(): Response
     {
         // Rendu de la vue
         return $this->render('front/about.html.twig');

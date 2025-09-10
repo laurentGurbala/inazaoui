@@ -35,17 +35,18 @@ class UserCheckerTest extends TestCase
         // ne doit rien lancer
         $this->checker->checkPreAuth($user);
 
-        $this->assertTrue(true); // simple assertion pour que PHPUnit considère le test valide
+        $this->expectNotToPerformAssertions();
     }
 
     public function testCheckPreAuthWithDifferentUserInterface(): void
     {
-        /** @var \Symfony\Component\Security\Core\User\UserInterface $mockUser */
+        /** @var \Symfony\Component\Security\Core\User\UserInterface&\PHPUnit\Framework\MockObject\MockObject $mockUser */
         $mockUser = $this->createMock(\Symfony\Component\Security\Core\User\UserInterface::class);
+
 
         // ne doit rien lancer
         $this->checker->checkPreAuth($mockUser);
 
-        $this->assertTrue(true);
+        $this->expectNotToPerformAssertions();
     }
 }
