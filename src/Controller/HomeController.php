@@ -11,14 +11,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route("/", name: "home")]
+    #[Route('/', name: 'home')]
     public function home(): Response
     {
         // Rendu de la vue
         return $this->render('front/home.html.twig');
     }
 
-    #[Route("/guests", name: "guests")]
+    #[Route('/guests', name: 'guests')]
     public function guests(UserRepository $userRepository): Response
     {
         // Récupère les invités non-bloqués
@@ -26,11 +26,11 @@ class HomeController extends AbstractController
 
         // Rendu de la vue avec les invités
         return $this->render('front/guests.html.twig', [
-            'guests' => $guests
+            'guests' => $guests,
         ]);
     }
 
-    #[Route("/guest/{id}", name: "guest")]
+    #[Route('/guest/{id}', name: 'guest')]
     public function guest(int $id, UserRepository $userRepository): Response
     {
         // On récupère l'invité par son id
@@ -44,18 +44,17 @@ class HomeController extends AbstractController
 
         // Rendu de la vue avec l'invité
         return $this->render('front/guest.html.twig', [
-            'guest' => $guest
+            'guest' => $guest,
         ]);
     }
 
-    #[Route("/portfolio/{id}", name: "portfolio")]
+    #[Route('/portfolio/{id}', name: 'portfolio')]
     public function portfolio(
         AlbumRepository $albumRepository,
         MediaRepository $mediaRepository,
         UserRepository $userRepository,
-        ?int $id = null
-    ): Response 
-    {
+        ?int $id = null,
+    ): Response {
         // Récupèr les albums, l'album courant et les médias
         $albums = $albumRepository->findAll();
         $album = $id ? $albumRepository->find($id) : null;
@@ -68,11 +67,11 @@ class HomeController extends AbstractController
         return $this->render('front/portfolio.html.twig', [
             'albums' => $albums,
             'album' => $album,
-            'medias' => $medias
+            'medias' => $medias,
         ]);
     }
 
-    #[Route("/about", name: "about")]
+    #[Route('/about', name: 'about')]
     public function about(): Response
     {
         // Rendu de la vue

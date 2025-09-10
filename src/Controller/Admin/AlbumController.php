@@ -13,11 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted("ROLE_ADMIN")]
-#[Route("/admin/album")]
+#[IsGranted('ROLE_ADMIN')]
+#[Route('/admin/album')]
 class AlbumController extends AbstractController
 {
-    #[Route("/", name: "admin_album_index")]
+    #[Route('/', name: 'admin_album_index')]
     public function index(AlbumRepository $albumRepository): Response
     {
         // Récupérer tous les albums
@@ -27,7 +27,7 @@ class AlbumController extends AbstractController
         return $this->render('admin/album/index.html.twig', ['albums' => $albums]);
     }
 
-    #[Route("/add", name: "admin_album_add")]
+    #[Route('/add', name: 'admin_album_add')]
     public function add(Request $request, EntityManagerInterface $em): Response
     {
         // Créer un formulaire avec un nouvel album
@@ -49,14 +49,13 @@ class AlbumController extends AbstractController
         return $this->render('admin/album/add.html.twig', ['form' => $form->createView()]);
     }
 
-    #[Route("/update/{id}", name: "admin_album_update")]
+    #[Route('/update/{id}', name: 'admin_album_update')]
     public function update(
         AlbumRepository $albumRepository,
         Request $request,
         int $id,
-        EntityManagerInterface $em
-    ): Response 
-    {
+        EntityManagerInterface $em,
+    ): Response {
         // Pré-remplissage du formulaire
         $album = $albumRepository->find($id);
 
@@ -73,7 +72,7 @@ class AlbumController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
 
-            // Rediriger vers la liste des albums 
+            // Rediriger vers la liste des albums
             return $this->redirectToRoute('admin_album_index');
         }
 
@@ -81,17 +80,16 @@ class AlbumController extends AbstractController
         return $this->render('admin/album/update.html.twig', ['form' => $form->createView()]);
     }
 
-    #[Route("/delete/{id}", name: "admin_album_delete")]
+    #[Route('/delete/{id}', name: 'admin_album_delete')]
     public function delete(
         int $id,
         AlbumRepository $albumRepository,
         MediaRepository $mediaRepository,
-        EntityManagerInterface $em
-    ): Response
-    {
+        EntityManagerInterface $em,
+    ): Response {
         // Récupérer l'album en fonction de l'id
         $album = $albumRepository->find($id);
-        
+
         if (!$album) {
             throw $this->createNotFoundException('Album introuvable.');
         }

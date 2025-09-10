@@ -2,17 +2,15 @@
 
 namespace App\Tests;
 
-use App\Tests\BaseTestCase;
-
 class SecurityControllerTest extends BaseTestCase
 {
     /**
-     * Test la page de login
+     * Test la page de login.
      */
     public function testLoginPage(): void
     {
         $client = static::createClient();
-        $crawler = $client->request("GET", "/login");
+        $crawler = $client->request('GET', '/login');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form');
@@ -21,20 +19,20 @@ class SecurityControllerTest extends BaseTestCase
     }
 
     /**
-     * Test la connexion avec des identifiants valides
+     * Test la connexion avec des identifiants valides.
      */
     public function testLoginWithValidCredentials(): void
     {
         $client = static::createClient();
-        $crawler = $client->request("GET", "/login");
+        $crawler = $client->request('GET', '/login');
 
-        $form = $crawler->selectButton("Connexion")->form([
-            "_username" => "ina@zaoui.com",
-            "_password" => "123",
+        $form = $crawler->selectButton('Connexion')->form([
+            '_username' => 'ina@zaoui.com',
+            '_password' => '123',
         ]);
 
         $client->submit($form);
-        $this->assertResponseRedirects("/");
+        $this->assertResponseRedirects('/');
 
         $client->followRedirect();
         $user = self::getContainer()->get('security.token_storage')->getToken()->getUser();
@@ -42,22 +40,22 @@ class SecurityControllerTest extends BaseTestCase
     }
 
     /**
-     * Test la connexion avec des identifiants invalides
+     * Test la connexion avec des identifiants invalides.
      */
     public function testLoginWithInvalidCredentials(): void
     {
         $client = static::createClient();
-        $crawler = $client->request("GET", "/login");
+        $crawler = $client->request('GET', '/login');
 
-        $form = $crawler->selectButton("Connexion")->form([
-            "_username" => "invalid@user.com",
-            "_password" => "wrongpassword",
+        $form = $crawler->selectButton('Connexion')->form([
+            '_username' => 'invalid@user.com',
+            '_password' => 'wrongpassword',
         ]);
 
         $client->submit($form);
 
         $this->assertResponseRedirects('/login');
         $client->followRedirect();
-        $this->assertSelectorTextContains(".alert-danger", "Invalid credentials.");
+        $this->assertSelectorTextContains('.alert-danger', 'Invalid credentials.');
     }
 }

@@ -2,19 +2,13 @@
 
 namespace App\Tests\Integration\Repository;
 
-use App\DataFixtures\UserFixtures;
-use App\DataFixtures\MediaFixtures;
 use App\Entity\Media;
 use App\Repository\MediaRepository;
-use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use Doctrine\Common\DataFixtures\Loader;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class MediaRepositoryTest extends KernelTestCase
 {
-
     private EntityManagerInterface $entityManager;
     private MediaRepository $mediaRepository;
 
@@ -28,24 +22,20 @@ class MediaRepositoryTest extends KernelTestCase
     /**
      * @dataProvider mediaProvider
      *
-     * @param array<string,mixed> $criteria
+     * @param array<string,mixed>  $criteria
      * @param array<string,string> $orderBy
-     * @param int $limit
-     * @param int $offset
-     * @param int|null $expectedCount
      */
     public function testFindAllVisibleMediasReturnsOnlyNonBlockedUsers(
-        array $criteria, 
-        array $orderBy, 
-        int $limit, 
-        int $offset, 
-        ?int $expectedCount
-    ): void
-    {
+        array $criteria,
+        array $orderBy,
+        int $limit,
+        int $offset,
+        ?int $expectedCount,
+    ): void {
         $medias = $this->mediaRepository->findAllVisibleMedias($criteria, $orderBy, $limit, $offset);
 
         // Si expectedCount est null => on ne teste pas le nombre exact
-        if ($expectedCount !== null) {
+        if (null !== $expectedCount) {
             $this->assertCount($expectedCount, $medias);
         } else {
             $this->assertNotEmpty($medias); // juste vérifier que la collection n'est pas vide
@@ -66,23 +56,23 @@ class MediaRepositoryTest extends KernelTestCase
         // Test avec critère
         $firstMedia = $this->mediaRepository->findOneBy([]);
         $countWithCriteria = $this->mediaRepository->countVisibleMedias([
-            'id' => $firstMedia->getId()
+            'id' => $firstMedia->getId(),
         ]);
 
         $this->assertEquals(1, $countWithCriteria);
     }
 
     /**
-     * Fournisseur de données pour les tests de findAllVisibleMedias
-     * 
+     * Fournisseur de données pour les tests de findAllVisibleMedias.
+     *
      * @return array<string, array{0: array<string,mixed>, 1: array<string,string>, 2: int, 3: int, 4: int|null}>
      */
     public function mediaProvider(): array
     {
         return [
             'no limit no offset' => [[], ['id' => 'ASC'], 0, 0, null],
-            'limit 5 offset 0'   => [[], ['id' => 'DESC'], 5, 0, 5],
-            'limit 5 offset 5'   => [[], ['id' => 'ASC'], 5, 5, 5],
+            'limit 5 offset 0' => [[], ['id' => 'DESC'], 5, 0, 5],
+            'limit 5 offset 5' => [[], ['id' => 'ASC'], 5, 5, 5],
             'offset beyond count' => [[], [], 5, 6000, 0],
         ];
     }

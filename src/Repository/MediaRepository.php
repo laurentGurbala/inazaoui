@@ -22,19 +22,17 @@ class MediaRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<string,mixed> $criteria
+     * @param array<string,mixed>  $criteria
      * @param array<string,string> $orderBy
-     * @param int $limit
-     * @param int $offset
+     *
      * @return Media[] Returns an array of Media objects
      */
     public function findAllVisibleMedias(
-        array $criteria = [], 
-        array $orderBy = [], 
-        int $limit = 0, 
-        int $offset = 0
-    ): array
-    {
+        array $criteria = [],
+        array $orderBy = [],
+        int $limit = 0,
+        int $offset = 0,
+    ): array {
         $qb = $this->createQueryBuilder('m')
             ->join('m.user', 'u')
             ->andWhere('u.isBlocked = false');
@@ -62,10 +60,9 @@ class MediaRepository extends ServiceEntityRepository
     }
 
     /**
-     * Compte le nombre total de médias visibles (non associés à des utilisateurs bloqués)
+     * Compte le nombre total de médias visibles (non associés à des utilisateurs bloqués).
      *
      * @param array<string,mixed> $criteria
-     * @return int
      */
     public function countVisibleMedias(array $criteria = []): int
     {
@@ -82,7 +79,6 @@ class MediaRepository extends ServiceEntityRepository
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
-
 
     //    /**
     //     * @return Media[] Returns an array of Media objects

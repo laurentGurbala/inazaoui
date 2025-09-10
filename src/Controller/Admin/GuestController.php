@@ -13,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted("ROLE_ADMIN")]
+#[IsGranted('ROLE_ADMIN')]
 #[Route('/admin/guests')]
 final class GuestController extends AbstractController
 {
@@ -21,8 +21,7 @@ final class GuestController extends AbstractController
     public function index(
         UserRepository $userRepository,
         Request $request,
-        ): Response
-    {
+    ): Response {
         // Pagination
         $page = max(1, $request->query->getInt('page', 1));
         $limit = 50;
@@ -42,13 +41,12 @@ final class GuestController extends AbstractController
         ]);
     }
 
-    #[Route("/add", name: "admin_guest_add", methods: ["GET", "POST"])]
+    #[Route('/add', name: 'admin_guest_add', methods: ['GET', 'POST'])]
     public function add(
         Request $request,
         UserPasswordHasherInterface $hasher,
-        EntityManagerInterface $em
-    ): Response
-    {
+        EntityManagerInterface $em,
+    ): Response {
         // Créer un utilisateur et un formulaire
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -64,46 +62,47 @@ final class GuestController extends AbstractController
             $em->flush();
 
             // Rediriger avec un message de succès
-            $this->addFlash("success", "L'invité a bien été ajouté");
+            $this->addFlash('success', "L'invité a bien été ajouté");
+
             // Rediriger vers la liste des invités
-            return $this->redirectToRoute("admin_guest_index");
+            return $this->redirectToRoute('admin_guest_index');
         }
 
         // Rendre le formulaire
-        return $this->render("admin/guest/add.html.twig", [
-            "form" => $form,
+        return $this->render('admin/guest/add.html.twig', [
+            'form' => $form,
         ]);
     }
 
-    #[Route("/{id}/delete", name: "admin_guest_delete", methods: ["GET"], requirements: ["id" => "\d+"])]
+    #[Route('/{id}/delete', name: 'admin_guest_delete', methods: ['GET'], requirements: ['id' => "\d+"])]
     public function delete(
         User $user,
         EntityManagerInterface $em,
-        ): Response 
-    {
+    ): Response {
         // Supprimer l'utilisateur
         $em->remove($user);
         $em->flush();
 
         // Rediriger avec un message de succès
-        $this->addFlash("success", "L'invité a bien été supprimé");
+        $this->addFlash('success', "L'invité a bien été supprimé");
+
         // Rediriger vers la liste des invités
-        return $this->redirectToRoute("admin_guest_index");
+        return $this->redirectToRoute('admin_guest_index');
     }
 
-    #[Route("/{id}/toggle-block", name: "admin_user_toggle_block", methods: ["GET"], requirements: ["id" => "\d+"])]
+    #[Route('/{id}/toggle-block', name: 'admin_user_toggle_block', methods: ['GET'], requirements: ['id' => "\d+"])]
     public function toggleBlock(
         User $user,
-        EntityManagerInterface $em
-        ): Response
-    {
+        EntityManagerInterface $em,
+    ): Response {
         // Inverser le statut de blocage
         $user->setIsBlocked(!$user->isBlocked());
         $em->flush();
 
         // Rediriger avec un message de succès
-        $this->addFlash("success", $user->isBlocked() ? 'Utilisateur bloqué' : 'Utilisateur débloqué');
+        $this->addFlash('success', $user->isBlocked() ? 'Utilisateur bloqué' : 'Utilisateur débloqué');
+
         // Rediriger vers la liste des invités
-        return $this->redirectToRoute("admin_guest_index");
+        return $this->redirectToRoute('admin_guest_index');
     }
 }

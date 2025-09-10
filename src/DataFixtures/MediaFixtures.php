@@ -6,8 +6,8 @@ use App\Entity\Album;
 use App\Entity\Media;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 
 class MediaFixtures extends Fixture implements DependentFixtureInterface
@@ -22,12 +22,12 @@ class MediaFixtures extends Fixture implements DependentFixtureInterface
 
     private function loadAlbum(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; ++$i) {
             $album = new Album();
-            $album->setName('Album ' . $i);
+            $album->setName('Album '.$i);
             $manager->persist($album);
 
-            $this->addReference(self::ALBUM_REFERENCE_PREFIX . $i, $album);
+            $this->addReference(self::ALBUM_REFERENCE_PREFIX.$i, $album);
         }
 
         $manager->flush();
@@ -38,28 +38,28 @@ class MediaFixtures extends Fixture implements DependentFixtureInterface
         $faker = Factory::create('fr_FR');
 
         // Create media for admin user
-        for ($i = 1; $i < 50; $i++) {
+        for ($i = 1; $i < 50; ++$i) {
             $media = new Media();
-            $media->setTitle("Titre " . $i);
+            $media->setTitle('Titre '.$i);
             $media->setPath(sprintf('uploads/%04d.jpg', $i));
             $media->setUser($this->getReference(UserFixtures::ADMIN_USER_REFERENCE, User::class));
 
             $albumIndex = (int) ceil($i / 10);
             $media->setAlbum(
-                $this->getReference(self::ALBUM_REFERENCE_PREFIX . $albumIndex, Album::class)
+                $this->getReference(self::ALBUM_REFERENCE_PREFIX.$albumIndex, Album::class)
             );
 
             $manager->persist($media);
         }
 
         // Create media for regular users
-        for ($i = 50; $i <= 5000; $i++) {
+        for ($i = 50; $i <= 5000; ++$i) {
             $media = new Media();
             $media->setTitle($faker->sentence(3));
             $media->setPath(sprintf('uploads/%04d.jpg', $i));
 
             // Assign a random user
-            $randomUser = $this->getReference("user_" . $faker->numberBetween(1, 100), User::class);
+            $randomUser = $this->getReference('user_'.$faker->numberBetween(1, 100), User::class);
             $media->setUser($randomUser);
 
             $manager->persist($media);

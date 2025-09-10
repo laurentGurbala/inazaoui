@@ -38,7 +38,7 @@ class HomeControllerTest extends BaseTestCase
     public function testGuestPage(int $id, int $expectedStatusCode): void
     {
         $client = static::createClient();
-        $client->request('GET', '/guest/' . $id);
+        $client->request('GET', '/guest/'.$id);
 
         $this->assertResponseStatusCodeSame($expectedStatusCode);
     }
@@ -52,7 +52,7 @@ class HomeControllerTest extends BaseTestCase
         $user->setIsBlocked(true);
         $em->flush();
 
-        $client->request('GET', '/guest/' . $user->getId());
+        $client->request('GET', '/guest/'.$user->getId());
 
         $this->assertResponseStatusCodeSame(404);
 
@@ -79,7 +79,7 @@ class HomeControllerTest extends BaseTestCase
     }
 
     /**
-     * Fournisseur de données pour les tests de la page des invités
+     * Fournisseur de données pour les tests de la page des invités.
      *
      * @return array<string, array{0: int, 1: int}>
      */
@@ -87,7 +87,7 @@ class HomeControllerTest extends BaseTestCase
     {
         return [
             'non existing guest' => [999999, 404],
-            'existing guest'     => [2, 200],
+            'existing guest' => [2, 200],
         ];
     }
 }

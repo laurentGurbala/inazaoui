@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class MediaControllerTest extends BaseTestCase
 {
     /**
-     * Test de l'accès à la liste des médias en tant qu'administrateur
+     * Test de l'accès à la liste des médias en tant qu'administrateur.
      */
     public function testIndexAsAdmin(): void
     {
@@ -27,7 +27,7 @@ class MediaControllerTest extends BaseTestCase
     }
 
     /**
-     * Test de l'accès à la liste des médias en tant qu'utilisateur standard
+     * Test de l'accès à la liste des médias en tant qu'utilisateur standard.
      */
     public function testIndexAsUser(): void
     {
@@ -44,7 +44,7 @@ class MediaControllerTest extends BaseTestCase
     }
 
     /**
-     * Test de l'accès à la liste des médias en tant qu'utilisateur anonyme
+     * Test de l'accès à la liste des médias en tant qu'utilisateur anonyme.
      */
     public function testIndexAsAnonymousRedirectsToLogin(): void
     {
@@ -55,7 +55,7 @@ class MediaControllerTest extends BaseTestCase
     }
 
     /**
-     * Test de l'ajout d'un média en tant qu'administrateur
+     * Test de l'ajout d'un média en tant qu'administrateur.
      */
     public function testAddAsAdmin(): void
     {
@@ -68,8 +68,8 @@ class MediaControllerTest extends BaseTestCase
         $this->assertSelectorExists('form');
 
         // Création d’un faux fichier image
-        $filePath = __DIR__ . '/Fixtures/test_image.jpg';
-        copy(__DIR__ . '/Fixtures/test_image.jpg', $filePath);
+        $filePath = __DIR__.'/Fixtures/test_image.jpg';
+        copy(__DIR__.'/Fixtures/test_image.jpg', $filePath);
         $this->assertFileExists($filePath, "Le fichier de test doit exister à l'emplacement Fixtures/test_image.jpg");
         $uploadedFile = new UploadedFile(
             $filePath,
@@ -91,13 +91,13 @@ class MediaControllerTest extends BaseTestCase
         // Remplir et soumettre le formulaire
         $form = $crawler->selectButton('Ajouter')->form([
             'media[title]' => 'Image de test',
-            "media[user]" => $user->getId(),
+            'media[user]' => $user->getId(),
             'media[album]' => $album->getId(),
         ]);
 
         // Soumettre le formulaire avec le fichier
         $client->submit($form, [
-            'media[file]' => $uploadedFile
+            'media[file]' => $uploadedFile,
         ]);
 
         // Vérifier la redirection
@@ -113,7 +113,7 @@ class MediaControllerTest extends BaseTestCase
     }
 
     /**
-     * Test de l'ajout d'un média en tant qu'utilisateur standard
+     * Test de l'ajout d'un média en tant qu'utilisateur standard.
      */
     public function testAddAsUser(): void
     {
@@ -126,8 +126,8 @@ class MediaControllerTest extends BaseTestCase
         $this->assertSelectorExists('form');
 
         // Création d’un faux fichier image
-        $filePath = __DIR__ . '/Fixtures/test_image.jpg';
-        copy(__DIR__ . '/Fixtures/test_image.jpg', $filePath);
+        $filePath = __DIR__.'/Fixtures/test_image.jpg';
+        copy(__DIR__.'/Fixtures/test_image.jpg', $filePath);
         $this->assertFileExists($filePath, "Le fichier de test doit exister à l'emplacement Fixtures/test_image.jpg");
         $uploadedFile = new UploadedFile(
             $filePath,
@@ -144,7 +144,7 @@ class MediaControllerTest extends BaseTestCase
 
         // Soumettre le formulaire avec le fichier
         $client->submit($form, [
-            'media[file]' => $uploadedFile
+            'media[file]' => $uploadedFile,
         ]);
 
         // Vérifier la redirection
@@ -168,7 +168,7 @@ class MediaControllerTest extends BaseTestCase
         // Créer un média à supprimer
         $media = new \App\Entity\Media();
         $media->setTitle('Media à supprimer');
-        $media->setPath(sys_get_temp_dir() . '/test_media.jpg');
+        $media->setPath(sys_get_temp_dir().'/test_media.jpg');
         file_put_contents($media->getPath(), 'dummy'); // créer un fichier vide
         $em->persist($media);
         $em->flush();
@@ -177,7 +177,7 @@ class MediaControllerTest extends BaseTestCase
         $this->assertFileExists($media->getPath());
 
         // Appel de la route delete
-        $client->request('GET', '/admin/media/delete/' . $mediaId);
+        $client->request('GET', '/admin/media/delete/'.$mediaId);
         $this->assertResponseRedirects('/admin/media/');
         $client->followRedirect();
 
@@ -186,6 +186,6 @@ class MediaControllerTest extends BaseTestCase
         $this->assertNull($deletedMedia);
 
         // Vérification fichier
-        $this->assertFileDoesNotExist(sys_get_temp_dir() . '/test_media.jpg');
+        $this->assertFileDoesNotExist(sys_get_temp_dir().'/test_media.jpg');
     }
 }

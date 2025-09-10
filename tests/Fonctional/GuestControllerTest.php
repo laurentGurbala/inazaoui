@@ -8,7 +8,7 @@ use App\Tests\BaseTestCase;
 class GuestControllerTest extends BaseTestCase
 {
     /**
-     * Test de la page d'index des invités
+     * Test de la page d'index des invités.
      */
     public function testGuestIndexPage(): void
     {
@@ -29,7 +29,7 @@ class GuestControllerTest extends BaseTestCase
     }
 
     /**
-     * Test d'accès refusé pour un utilisateur non administrateur
+     * Test d'accès refusé pour un utilisateur non administrateur.
      */
     public function testGuestIndexAccessDeniedForNonAdmin(): void
     {
@@ -46,7 +46,7 @@ class GuestControllerTest extends BaseTestCase
     }
 
     /**
-     * Test de l'ajout d'un invité
+     * Test de l'ajout d'un invité.
      */
     public function testAddGuest(): void
     {
@@ -61,11 +61,11 @@ class GuestControllerTest extends BaseTestCase
         $this->assertSelectorExists('input[name="user[name]"]');
 
         // Récupérer le formulaire et le remplir
-        $form = $client->getCrawler()->selectButton("Enregistrer")->form([
-            "user[name]" => "Invité Test",
-            "user[description]" => "Description de l'invité test",
-            "user[email]" => "invite.test@example.com",
-            "user[password]" => "123",
+        $form = $client->getCrawler()->selectButton('Enregistrer')->form([
+            'user[name]' => 'Invité Test',
+            'user[description]' => "Description de l'invité test",
+            'user[email]' => 'invite.test@example.com',
+            'user[password]' => '123',
         ]);
 
         // Soumettre le formulaire
@@ -89,7 +89,7 @@ class GuestControllerTest extends BaseTestCase
     }
 
     /**
-     * Test d'ajout d'un invité avec un email déjà existant
+     * Test d'ajout d'un invité avec un email déjà existant.
      */
     public function testAddGuestWithExistingEmail(): void
     {
@@ -108,11 +108,11 @@ class GuestControllerTest extends BaseTestCase
         $this->assertResponseIsSuccessful();
 
         // Récupérer le formulaire et le remplir avec un email existant
-        $form = $crawler->selectButton("Enregistrer")->form([
-            "user[name]" => "Invité Test Duplicate",
-            "user[description]" => "Description test",
-            "user[email]" => $existingUser->getEmail(),
-            "user[password]" => "123",
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'user[name]' => 'Invité Test Duplicate',
+            'user[description]' => 'Description test',
+            'user[email]' => $existingUser->getEmail(),
+            'user[password]' => '123',
         ]);
 
         // Soumettre le formulaire
@@ -125,13 +125,12 @@ class GuestControllerTest extends BaseTestCase
     }
 
     /**
-     * Test d'ajout d'un invité avec des données invalides
+     * Test d'ajout d'un invité avec des données invalides.
      */
     /**
      * @dataProvider invalidGuestProvider
      *
      * @param array<string,string> $formData
-     * @param string $expectedError
      */
     public function testAddGuestInvalidData(array $formData, string $expectedError): void
     {
@@ -153,7 +152,7 @@ class GuestControllerTest extends BaseTestCase
     }
 
     /**
-     * Fournisseur de données pour les tests d'ajout d'invité avec des données invalides
+     * Fournisseur de données pour les tests d'ajout d'invité avec des données invalides.
      *
      * @return array<string, array{0: array<string,string>, 1: string}>
      */
@@ -182,7 +181,7 @@ class GuestControllerTest extends BaseTestCase
     }
 
     /**
-     * Test de la suppression d'un invité
+     * Test de la suppression d'un invité.
      */
     public function testDeleteGuest(): void
     {
@@ -203,7 +202,7 @@ class GuestControllerTest extends BaseTestCase
         $guestId = $guest->getId();
 
         // Accéder à la page de suppression de l'invité
-        $client->request('GET', '/admin/guests/' . $guestId . '/delete');
+        $client->request('GET', '/admin/guests/'.$guestId.'/delete');
         $this->assertResponseStatusCodeSame(302);
         $this->assertResponseRedirects('/admin/guests/');
 
@@ -216,7 +215,7 @@ class GuestControllerTest extends BaseTestCase
     }
 
     /**
-     * Test de la suppression d'un invité sans être connecté
+     * Test de la suppression d'un invité sans être connecté.
      */
     public function testDeleteGuestRequiresLogin(): void
     {
@@ -230,14 +229,14 @@ class GuestControllerTest extends BaseTestCase
 
         // Tentative de suppression d'un invité
         $guestId = $guest->getId();
-        $client->request("GET", "/admin/guests/" . $guestId . "/delete");
+        $client->request('GET', '/admin/guests/'.$guestId.'/delete');
 
         // Vérifier la redirection vers la page de login
-        $this->assertResponseRedirects("/login");
+        $this->assertResponseRedirects('/login');
     }
 
     /**
-     * Test de la suppression d'un invité en tant qu'utilisateur non administrateur
+     * Test de la suppression d'un invité en tant qu'utilisateur non administrateur.
      */
     public function testDeleteGuestAccessDeniedForNonAdmin(): void
     {
@@ -252,12 +251,12 @@ class GuestControllerTest extends BaseTestCase
         $guestId = $guest->getId();
 
         // Tentative de suppression
-        $client->request("GET", "/admin/guests/" . $guestId . "/delete");
+        $client->request('GET', '/admin/guests/'.$guestId.'/delete');
         $this->assertResponseStatusCodeSame(403);
     }
 
     /**
-     * Test de la suppression d'un invité avec un ID non existant
+     * Test de la suppression d'un invité avec un ID non existant.
      */
     public function testDeleteNonExistentGuest(): void
     {
@@ -271,7 +270,7 @@ class GuestControllerTest extends BaseTestCase
     }
 
     /**
-     * Test du blocage et déblocage d'un invité
+     * Test du blocage et déblocage d'un invité.
      */
     public function testToggleBlock(): void
     {
@@ -288,7 +287,7 @@ class GuestControllerTest extends BaseTestCase
         $guestId = $guest->getId();
 
         // Toggle → devrait bloquer
-        $client->request('GET', '/admin/guests/' . $guestId . '/toggle-block');
+        $client->request('GET', '/admin/guests/'.$guestId.'/toggle-block');
         $this->assertResponseRedirects('/admin/guests/');
         $client->followRedirect();
 
@@ -299,7 +298,7 @@ class GuestControllerTest extends BaseTestCase
         $this->assertSelectorTextContains('.alert-success', 'Utilisateur bloqué');
 
         // Toggle à nouveau → devrait débloquer
-        $client->request('GET', '/admin/guests/' . $guestId . '/toggle-block');
+        $client->request('GET', '/admin/guests/'.$guestId.'/toggle-block');
         $this->assertResponseRedirects('/admin/guests/');
         $client->followRedirect();
 

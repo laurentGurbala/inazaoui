@@ -15,10 +15,10 @@ class Media
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "medias", fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'medias', fetch: 'EAGER')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Album::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: Album::class, fetch: 'EAGER')]
     private ?Album $album = null;
 
     #[ORM\Column]
@@ -27,12 +27,12 @@ class Media
     #[ORM\Column]
     private string $title;
 
-    #[Assert\NotNull(message: "Veuillez sélectionner une image.")]
+    #[Assert\NotNull(message: 'Veuillez sélectionner une image.')]
     #[Assert\File(
-        maxSize: "2M",
-        maxSizeMessage: "Le fichier est trop volumineux ({{ size }} {{ suffix }}). La taille maximale autorisée est de {{ limit }} {{ suffix }}.",
-        extensions: ["jpg", "jpeg", "png", "gif", "webp"],
-        extensionsMessage: "Veuillez uploader une image valide (jpg, jpeg, png, gif, webp)."
+        maxSize: '2M',
+        maxSizeMessage: 'Le fichier est trop volumineux ({{ size }} {{ suffix }}). La taille maximale autorisée est de {{ limit }} {{ suffix }}.',
+        extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        extensionsMessage: 'Veuillez uploader une image valide (jpg, jpeg, png, gif, webp).'
     )]
     private ?UploadedFile $file = null;
 

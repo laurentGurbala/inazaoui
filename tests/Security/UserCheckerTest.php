@@ -43,7 +43,6 @@ class UserCheckerTest extends TestCase
         /** @var \Symfony\Component\Security\Core\User\UserInterface&\PHPUnit\Framework\MockObject\MockObject $mockUser */
         $mockUser = $this->createMock(\Symfony\Component\Security\Core\User\UserInterface::class);
 
-
         // ne doit rien lancer
         $this->checker->checkPreAuth($mockUser);
 

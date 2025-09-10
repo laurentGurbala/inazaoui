@@ -100,7 +100,6 @@ class AlbumControllerTest extends BaseTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
-
     public function testDeleteAlbum(): void
     {
         // Connection
@@ -141,7 +140,7 @@ class AlbumControllerTest extends BaseTestCase
         $this->assertNotNull($em->getRepository(\App\Entity\Media::class)->find($media2Id));
 
         // Suppression de l'album
-        $client->request('GET', '/admin/album/delete/' . $albumId);
+        $client->request('GET', '/admin/album/delete/'.$albumId);
         $this->assertResponseRedirects('/admin/album/');
 
         // Vérification en BDD
@@ -160,8 +159,8 @@ class AlbumControllerTest extends BaseTestCase
     {
         return [
             'non connecté → redirection login' => [null, 302],
-            'connecté simple user → 403'      => ['invite1@test.fr', 403],
-            'connecté admin → 200'            => ['ina@zaoui.com', 200],
+            'connecté simple user → 403' => ['invite1@test.fr', 403],
+            'connecté admin → 200' => ['ina@zaoui.com', 200],
         ];
     }
 }

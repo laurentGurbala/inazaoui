@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route("/admin/media")]
+#[Route('/admin/media')]
 class MediaController extends AbstractController
 {
-    #[Route("/", name: "admin_media_index")]
+    #[Route('/', name: 'admin_media_index')]
     public function index(Request $request, MediaRepository $mediaRepository): Response
     {
         $page = $request->query->getInt('page', 1);
@@ -42,10 +42,10 @@ class MediaController extends AbstractController
         ]);
     }
 
-    #[Route("/add", name: "admin_media_add")]
+    #[Route('/add', name: 'admin_media_add')]
     public function add(
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
     ): Response {
         $media = new Media();
         $form = $this->createForm(MediaType::class, $media, ['is_admin' => $this->isGranted('ROLE_ADMIN')]);
@@ -57,8 +57,8 @@ class MediaController extends AbstractController
                 $user = $this->getUser();
                 $media->setUser($user);
             }
-            
-            $media->setPath('uploads/' . md5(uniqid()) . '.' . $media->getFile()->guessExtension());
+
+            $media->setPath('uploads/'.md5(uniqid()).'.'.$media->getFile()->guessExtension());
             $media->getFile()->move('uploads/', $media->getPath());
             $em->persist($media);
             $em->flush();
@@ -69,11 +69,11 @@ class MediaController extends AbstractController
         return $this->render('admin/media/add.html.twig', ['form' => $form->createView()]);
     }
 
-    #[Route("/delete/{id}", name: "admin_media_delete")]
+    #[Route('/delete/{id}', name: 'admin_media_delete')]
     public function delete(
         int $id,
         MediaRepository $mediaRepository,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
     ): Response {
         $media = $mediaRepository->find($id);
         $em->remove($media);
