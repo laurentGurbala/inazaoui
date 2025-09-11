@@ -1,0 +1,68 @@
+name: CI Symfony
+
+on:
+  push:
+    branches: ["main", "ci"]
+  pull_request:
+    branches: ["main", "ci"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mariadb:10.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: inazaoui
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+       # 1️⃣ Récupérer le code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ Installer PHP et extensions
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl, pdo_mysql
+          tools: composer, symfony
+
+      # 3️⃣ Installer dépendances
+      - name: Install dependencies
+        run: composer install --no-progress --no-interaction --prefer-dist
+
+      # 4️⃣ Configurer l'environnement de test
+      - name: Create .env.test.local
+        run: |
+          echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/inazaoui?serverVersion=10.4.32-MariaDB&charset=utf8mb4" > .env.test.local
+
+      # 5️⃣ Préparer la base de données (via Doctrine)
+      - name: Prepare database
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:schema:create --env=test
+          php bin/console doctrine:fixtures:load --env=test --no-interaction
+        
+      # (Optionnel) Vérifier que les fixtures sont bien en place
+      - name: Check DB content
+        run: php bin/console doctrine:query:sql "SELECT COUNT(*) as count FROM user;" --env=test
+
+      # 6️⃣ Clear + warmup cache
+      - name: Clear & warmup cache
+        run: |
+          php bin/console cache:clear --env=test
+          php bin/console cache:warmup --env=test
+      
+      # 7️⃣ Lancer les tests PHPUnit
+      - name: Run tests
+        run: ./bin/phpunit --testdox
