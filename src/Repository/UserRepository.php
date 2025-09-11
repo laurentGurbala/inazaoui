@@ -40,12 +40,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findAdmin(): ?User
     {
-        return $this->createQueryBuilder('u')
+        /** @var User|null $admin */
+        $admin = $this->createQueryBuilder('u')
             ->andWhere('u.roles LIKE :role')
             ->setParameter('role', '%"ROLE_ADMIN"%')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
+
+        return $admin;
     }
 
     /**
@@ -53,7 +55,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function findGuests(int $offset = 0, int $limit = 50): array
     {
-        return $this->createQueryBuilder('u')
+        /** @var User[] $guests */
+        $guests = $this->createQueryBuilder('u')
             ->where('u.roles NOT LIKE :role')
             ->setParameter('role', '%ROLE_ADMIN%')
             ->orderBy('u.id', 'desc')
@@ -61,6 +64,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+
+        return $guests;
     }
 
     /**
@@ -68,7 +73,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function findVisibleGuests(): array
     {
-        return $this->createQueryBuilder('u')
+        /** @var User[] $guests */
+        $guests = $this->createQueryBuilder('u')
             ->andWhere('u.isBlocked = false')
             ->andWhere('NOT u.roles LIKE :admin')
             ->setParameter('admin', '%ROLE_ADMIN%')
@@ -76,6 +82,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->addSelect('m')
             ->getQuery()
             ->getResult();
+
+        return $guests;
     }
 
     //    /**

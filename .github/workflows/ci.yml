@@ -46,7 +46,14 @@ jobs:
         run: |
           echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/inazaoui?serverVersion=10.4.32-MariaDB&charset=utf8mb4" > .env.test.local
 
-      # 5️⃣ Préparer la base de données (via Doctrine)
+      # 5️⃣ Vérification qualité de code
+      - name: PHPStan analysis
+        run: vendor/bin/phpstan analyse --level=max src tests
+
+      - name: PHP CS Fixer (dry-run)
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff
+
+      # 6️⃣ Préparer la base de données de test
       - name: Prepare database
         run: |
           php bin/console doctrine:database:create --env=test --if-not-exists
@@ -57,7 +64,7 @@ jobs:
       - name: Check DB content
         run: php bin/console doctrine:query:sql "SELECT COUNT(*) as count FROM user;" --env=test
 
-      # 6️⃣ Clear + warmup cache
+      # Mettre en cache les métadonnées et routes
       - name: Clear & warmup cache
         run: |
           php bin/console cache:clear --env=test

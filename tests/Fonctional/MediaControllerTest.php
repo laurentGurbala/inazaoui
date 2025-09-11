@@ -3,10 +3,14 @@
 namespace App\Tests;
 
 use App\Entity\User;
+use App\Tests\Helpers\TestHelpersTrait;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class MediaControllerTest extends BaseTestCase
+class MediaControllerTest extends WebTestCase
 {
+    use TestHelpersTrait;
+
     /**
      * Test de l'accès à la liste des médias en tant qu'administrateur.
      */
@@ -80,12 +84,15 @@ class MediaControllerTest extends BaseTestCase
         );
 
         // Récupérer un album existant pour l'assigner au média
-        $albumRepository = static::getContainer()->get('doctrine')->getRepository(\App\Entity\Album::class);
+        $albumRepository = $this->getRepository(\App\Entity\Album::class);
+        /** @var \App\Entity\Album $album */
         $album = $albumRepository->findOneBy([]);
-        $this->assertNotNull($album);
+        /** @var int $albumId */
+        $albumId = $album->getId();
 
         // Récupérer un utilisateur existant pour l'assigner au média
-        $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
+        $userRepository = $this->getRepository(User::class);
+        /** @var User $user */
         $user = $userRepository->findOneBy([]);
 
         // Remplir et soumettre le formulaire
@@ -105,11 +112,15 @@ class MediaControllerTest extends BaseTestCase
         $client->followRedirect();
 
         // Vérifier que le média a bien été créé en BDD
-        $em = static::getContainer()->get('doctrine')->getManager();
+        $em = $this->getEntityManager();
         $mediaRepo = $em->getRepository(\App\Entity\Media::class);
+        /** @var \App\Entity\Media $media */
         $media = $mediaRepo->findOneBy(['title' => 'Image de test']);
-        $this->assertNotNull($media);
-        $this->assertEquals($album->getId(), $media->getAlbum()->getId());
+        /** @var \App\Entity\Album $mediaAlbum */
+        $mediaAlbum = $media->getAlbum();
+        /** @var int $mediaAlbumID */
+        $mediaAlbumID = $mediaAlbum->getId();
+        $this->assertEquals($albumId, $mediaAlbumID);
     }
 
     /**
@@ -152,8 +163,7 @@ class MediaControllerTest extends BaseTestCase
         $client->followRedirect();
 
         // Vérifier que le média a bien été créé en BDD
-        $em = static::getContainer()->get('doctrine')->getManager();
-        $mediaRepo = $em->getRepository(\App\Entity\Media::class);
+        $mediaRepo = $this->getRepository(\App\Entity\Media::class);
         $media = $mediaRepo->findOneBy(['title' => 'Image de test']);
         $this->assertNotNull($media);
     }
@@ -163,7 +173,7 @@ class MediaControllerTest extends BaseTestCase
         $client = static::createClient();
         $this->loginAsAdmin($client);
 
-        $em = static::getContainer()->get('doctrine')->getManager();
+        $em = $this->getEntityManager();
 
         // Créer un média à supprimer
         $media = new \App\Entity\Media();
@@ -182,7 +192,7 @@ class MediaControllerTest extends BaseTestCase
         $client->followRedirect();
 
         // Vérification BDD
-        $deletedMedia = $em->getRepository(\App\Entity\Media::class)->find($mediaId);
+        $deletedMedia = $this->getRepository(\App\Entity\Media::class)->find($mediaId);
         $this->assertNull($deletedMedia);
 
         // Vérification fichier

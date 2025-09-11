@@ -4,19 +4,21 @@ namespace App\Tests\Integration\Repository;
 
 use App\Entity\Media;
 use App\Repository\MediaRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Tests\Helpers\TestHelpersTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class MediaRepositoryTest extends KernelTestCase
 {
-    private EntityManagerInterface $entityManager;
+    use TestHelpersTrait;
+
     private MediaRepository $mediaRepository;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-        $this->mediaRepository = $this->entityManager->getRepository(Media::class);
+        /** @var MediaRepository $repo */
+        $repo = $this->getRepository(Media::class);
+        $this->mediaRepository = $repo;
     }
 
     /**
@@ -43,7 +45,9 @@ class MediaRepositoryTest extends KernelTestCase
 
         // Tous les médias doivent appartenir à des utilisateurs non bloqués
         foreach ($medias as $media) {
-            $this->assertFalse($media->getUser()->isBlocked());
+            $user = $media->getUser();
+            $this->assertNotNull($user);
+            $this->assertFalse($user->isBlocked());
         }
     }
 
@@ -54,6 +58,7 @@ class MediaRepositoryTest extends KernelTestCase
         $this->assertGreaterThan(0, $count);
 
         // Test avec critère
+        /** @var Media $firstMedia */
         $firstMedia = $this->mediaRepository->findOneBy([]);
         $countWithCriteria = $this->mediaRepository->countVisibleMedias([
             'id' => $firstMedia->getId(),

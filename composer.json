@@ -99,10 +99,10 @@
             "php bin/console doctrine:database:create --env=test",
             "php bin/console doctrine:schema:create --env=test",
             "php bin/console doctrine:fixtures:load --env=test --no-interaction",
-            "php vendor/bin/phpunit --coverage-html test/test-coverage"
+            "php vendor/bin/phpunit --coverage-html tests/test-coverage"
         ],
         "test-no-purge": [
-            "php vendor/bin/phpunit --coverage-html test/test-coverage"
+            "php vendor/bin/phpunit --coverage-html tests/test-coverage"
         ],
         "test-home-ctrl": [
             "php vendor/bin/phpunit tests/Fonctional/HomeControllerTest.php"

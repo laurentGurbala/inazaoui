@@ -4,20 +4,22 @@ namespace App\Tests\Integration\Repository;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Tests\Helpers\TestHelpersTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class UserRepositoryTest extends KernelTestCase
 {
-    private EntityManagerInterface $entityManager;
+    use TestHelpersTrait;
+
     private UserRepository $userRepository;
 
     public function setUp(): void
     {
         self::bootKernel();
 
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-        $this->userRepository = $this->entityManager->getRepository(User::class);
+        /** @var UserRepository $repo */
+        $repo = $this->getRepository(User::class);
+        $this->userRepository = $repo;
     }
 
     public function testFindAdmin(): void

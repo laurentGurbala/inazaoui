@@ -2,7 +2,9 @@
 
 namespace App\Tests;
 
-class SecurityControllerTest extends BaseTestCase
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+class SecurityControllerTest extends WebTestCase
 {
     /**
      * Test la page de login.
@@ -35,7 +37,19 @@ class SecurityControllerTest extends BaseTestCase
         $this->assertResponseRedirects('/');
 
         $client->followRedirect();
-        $user = self::getContainer()->get('security.token_storage')->getToken()->getUser();
+
+        /** @var \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface $tokenStorage */
+        $tokenStorage = self::getContainer()->get('security.token_storage');
+
+        /** @var \Symfony\Component\Security\Core\Authentication\Token\TokenInterface|null $token */
+        $token = $tokenStorage->getToken();
+        if (!$token) {
+            throw new \LogicException('Aucun token trouvé.');
+        }
+
+        /** @var \App\Entity\User $user */
+        $user = $token->getUser();
+
         $this->assertEquals('ina@zaoui.com', $user->getEmail());
     }
 

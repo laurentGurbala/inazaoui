@@ -3,10 +3,13 @@
 namespace App\Tests\Fonctional;
 
 use App\Entity\User;
-use App\Tests\BaseTestCase;
+use App\Tests\Helpers\TestHelpersTrait;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class GuestControllerTest extends BaseTestCase
+class GuestControllerTest extends WebTestCase
 {
+    use TestHelpersTrait;
+
     /**
      * Test de la page d'index des invités.
      */
@@ -36,7 +39,8 @@ class GuestControllerTest extends BaseTestCase
         $client = static::createClient();
 
         // Connexion d'un utilisateur normal
-        $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
+        $userRepository = $this->getRepository(User::class);
+        /** @var User $user */
         $user = $userRepository->findOneBy(['email' => 'invite1@test.fr']);
         $client->loginUser($user);
 
@@ -77,15 +81,15 @@ class GuestControllerTest extends BaseTestCase
         $this->assertSelectorTextContains('table tbody', 'Invité Test');
 
         // Vérifier que l'invité est bien dans la base de données
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)
-            ->findOneBy(['email' => 'invite.test@example.com']);
-        $this->assertNotNull($user);
+        $userRepository = $this->getRepository(User::class);
+        /** @var User $user */
+        $user = $userRepository->findOneBy(['email' => 'invite.test@example.com']);
         $this->assertEquals('Invité Test', $user->getName());
 
         // Nettoyer la base de données en supprimant l'invité ajouté
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
-        $entityManager->remove($user);
-        $entityManager->flush();
+        $em = $this->getEntityManager();
+        $em->remove($user);
+        $em->flush();
     }
 
     /**
@@ -98,7 +102,8 @@ class GuestControllerTest extends BaseTestCase
         $this->loginAsAdmin($client);
 
         // On récupère un utilisateur existant pour utiliser son email
-        $existingUser = self::getContainer()->get('doctrine')
+        /** @var User|null $existingUser */
+        $existingUser = $this
             ->getRepository(User::class)
             ->findOneBy([]);
         $this->assertNotNull($existingUser);
@@ -196,9 +201,9 @@ class GuestControllerTest extends BaseTestCase
         $guest->setPassword('123');
 
         // Enregistrer l'invité
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
-        $entityManager->persist($guest);
-        $entityManager->flush();
+        $em = $this->getEntityManager();
+        $em->persist($guest);
+        $em->flush();
         $guestId = $guest->getId();
 
         // Accéder à la page de suppression de l'invité
@@ -211,7 +216,7 @@ class GuestControllerTest extends BaseTestCase
         $this->assertSelectorTextContains('.alert-success', "L'invité a bien été supprimé");
 
         // Vérifier que l'invité a été supprimé
-        $this->assertNull($entityManager->getRepository(User::class)->find($guestId));
+        $this->assertNull($this->getRepository(User::class)->find($guestId));
     }
 
     /**
@@ -223,8 +228,8 @@ class GuestControllerTest extends BaseTestCase
         $client = static::createClient();
 
         // Récupérer un invité existant
-        $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
-        $guest = $userRepository->findOneBy([]);
+        /** @var User|null $guest */
+        $guest = $this->getRepository(User::class)->findOneBy([]);
         $this->assertNotNull($guest);
 
         // Tentative de suppression d'un invité
@@ -245,7 +250,11 @@ class GuestControllerTest extends BaseTestCase
         $this->loginAsUser($client);
 
         // Récupérer un invité existant
-        $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
+        $userRepository = $this->getRepository(User::class);
+        /** @var \App\Repository\UserRepository $userRepository */
+        $userRepository = $this->getRepository(User::class);
+
+        /** @var User|null $guest */
         $guest = $userRepository->findOneBy([], ['id' => 'DESC']);
         $this->assertNotNull($guest);
         $guestId = $guest->getId();
@@ -278,10 +287,11 @@ class GuestControllerTest extends BaseTestCase
         $client = static::createClient();
         $this->loginAsAdmin($client);
 
-        $em = static::getContainer()->get('doctrine')->getManager();
-        $userRepository = $em->getRepository(User::class);
+        $em = $this->getEntityManager();
+        $userRepository = $this->getRepository(User::class);
 
         // On prend un invité existant
+        /** @var User|null $guest */
         $guest = $userRepository->findOneBy(['isBlocked' => false]);
         $this->assertNotNull($guest);
         $guestId = $guest->getId();
@@ -292,7 +302,9 @@ class GuestControllerTest extends BaseTestCase
         $client->followRedirect();
 
         $em->clear();
+        /** @var User|null $updatedGuest */
         $updatedGuest = $userRepository->find($guestId);
+        $this->assertNotNull($updatedGuest);
         $this->assertTrue($updatedGuest->isBlocked());
         $this->assertSelectorExists('.alert-success');
         $this->assertSelectorTextContains('.alert-success', 'Utilisateur bloqué');
@@ -303,7 +315,9 @@ class GuestControllerTest extends BaseTestCase
         $client->followRedirect();
 
         $em->clear();
+        /** @var User|null $updatedGuest */
         $updatedGuest = $userRepository->find($guestId);
+        $this->assertNotNull($updatedGuest);
         $this->assertFalse($updatedGuest->isBlocked());
         $this->assertSelectorTextContains('.alert-success', 'Utilisateur débloqué');
     }

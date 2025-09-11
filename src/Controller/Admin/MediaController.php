@@ -58,10 +58,15 @@ class MediaController extends AbstractController
                 $media->setUser($user);
             }
 
-            $media->setPath('uploads/'.md5(uniqid()).'.'.$media->getFile()->guessExtension());
-            $media->getFile()->move('uploads/', $media->getPath());
-            $em->persist($media);
-            $em->flush();
+            $file = $media->getFile();
+
+            if (null !== $file) {
+                $media->setPath('uploads/'.md5(uniqid()).'.'.$file->guessExtension());
+
+                $file->move('uploads/', $media->getPath());
+                $em->persist($media);
+                $em->flush();
+            }
 
             return $this->redirectToRoute('admin_media_index');
         }
@@ -71,14 +76,14 @@ class MediaController extends AbstractController
 
     #[Route('/delete/{id}', name: 'admin_media_delete')]
     public function delete(
-        int $id,
-        MediaRepository $mediaRepository,
+        Media $media,
         EntityManagerInterface $em,
     ): Response {
-        $media = $mediaRepository->find($id);
+        if ($media->getPath() && file_exists($media->getPath())) {
+            unlink($media->getPath());
+        }
         $em->remove($media);
         $em->flush();
-        unlink($media->getPath());
 
         return $this->redirectToRoute('admin_media_index');
     }

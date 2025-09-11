@@ -56,7 +56,10 @@ class MediaRepository extends ServiceEntityRepository
             $qb->setFirstResult($offset);
         }
 
-        return $qb->getQuery()->getResult();
+        /** @var Media[] $medias */
+        $medias = $qb->getQuery()->getResult();
+
+        return $medias;
     }
 
     /**

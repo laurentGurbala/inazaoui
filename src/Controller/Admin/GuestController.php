@@ -56,7 +56,11 @@ final class GuestController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Hasher le mot de passe
             $plainPassword = $form->get('password')->getData();
+            if (!is_string($plainPassword)) {
+                throw new \LogicException('Password must be a string.');
+            }
             $user->setPassword($hasher->hashPassword($user, $plainPassword));
+
             // Enregistrer l'utilisateur
             $em->persist($user);
             $em->flush();

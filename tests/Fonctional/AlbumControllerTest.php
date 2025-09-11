@@ -3,35 +3,45 @@
 namespace App\Tests\Fonctional;
 
 use App\Entity\Album;
+use App\Entity\Media;
 use App\Entity\User;
-use App\Tests\BaseTestCase;
+use App\Tests\Helpers\TestHelpersTrait;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class AlbumControllerTest extends BaseTestCase
+class AlbumControllerTest extends WebTestCase
 {
+    use TestHelpersTrait;
+
     /**
      * @dataProvider albumIndexAccessProvider
      */
     public function testAlbumIndexAccess(?string $userEmail, int $expectedStatusCode): void
     {
         $client = static::createClient();
-        $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
 
+        /** @var \App\Repository\UserRepository $userRepository */
+        $userRepository = $this->getRepository(User::class);
+
+        // Si un email d'utilisateur est fourni, on se connecte avec cet utilisateur
         if ($userEmail) {
+            /** @var User|null $user */
             $user = $userRepository->findOneBy(['email' => $userEmail]);
+
+            if (!$user) {
+                throw new \LogicException(sprintf('User with email "%s" not found.', $userEmail));
+            }
+
             $client->loginUser($user);
         }
 
         $client->request('GET', '/admin/album/');
-
         $this->assertResponseStatusCodeSame($expectedStatusCode);
     }
 
     public function testAddPageAccessDeniedForNonAdmin(): void
     {
         $client = static::createClient();
-        $userRepository = static::getContainer()->get('doctrine')->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => 'invite1@test.fr']);
-        $client->loginUser($user);
+        $this->loginAsUser($client);
 
         $client->request('GET', '/admin/album/add');
         $this->assertResponseStatusCodeSame(403);
@@ -65,8 +75,8 @@ class AlbumControllerTest extends BaseTestCase
         $this->assertResponseRedirects('/admin/album/');
 
         // Vérifier que l’album a bien été enregistré en BDD
-        $em = static::getContainer()->get('doctrine')->getManager();
-        $album = $em->getRepository(Album::class)->findOneBy(['name' => 'Nouvel Album Test']);
+        $albumRepository = $this->getRepository(Album::class);
+        $album = $albumRepository->findOneBy(['name' => 'Nouvel Album Test']);
         $this->assertNotNull($album);
     }
 
@@ -86,7 +96,9 @@ class AlbumControllerTest extends BaseTestCase
         $this->assertResponseRedirects('/admin/album/');
 
         // Vérification en BDD
-        $album = static::getContainer()->get('doctrine')->getRepository(Album::class)->find(1);
+        $albumRepository = $this->getRepository(Album::class);
+        /** @var Album $album */
+        $album = $albumRepository->find(1);
         $this->assertEquals('Nouvel Album Test', $album->getName());
     }
 
@@ -111,20 +123,20 @@ class AlbumControllerTest extends BaseTestCase
         $album->setName('Album à supprimer');
 
         // Création des médias
-        $media1 = new \App\Entity\Media();
+        $media1 = new Media();
         $media1->setTitle('Media 1');
         $media1->setPath('media1.jpg');
         $media1->setUser($this->loginAsAdmin($client));
         $media1->setAlbum($album);
 
-        $media2 = new \App\Entity\Media();
+        $media2 = new Media();
         $media2->setTitle('Media 2');
         $media2->setPath('media2.jpg');
         $media2->setUser($this->loginAsAdmin($client));
         $media2->setAlbum($album);
 
         // Persistance en BDD
-        $em = static::getContainer()->get('doctrine')->getManager();
+        $em = $this->getEntityManager();
         $em->persist($album);
         $em->persist($media1);
         $em->persist($media2);
@@ -135,9 +147,11 @@ class AlbumControllerTest extends BaseTestCase
         $media2Id = $media2->getId();
 
         // Vérification que l'album et les médias existent en BDD
-        $this->assertNotNull($em->getRepository(Album::class)->find($albumId));
-        $this->assertNotNull($em->getRepository(\App\Entity\Media::class)->find($media1Id));
-        $this->assertNotNull($em->getRepository(\App\Entity\Media::class)->find($media2Id));
+        $albumRepository = $this->getRepository(Album::class);
+        $this->assertNotNull($albumRepository->find($albumId));
+        $mediaRepository = $this->getRepository(Media::class);
+        $this->assertNotNull($mediaRepository->find($media1Id));
+        $this->assertNotNull($mediaRepository->find($media2Id));
 
         // Suppression de l'album
         $client->request('GET', '/admin/album/delete/'.$albumId);
